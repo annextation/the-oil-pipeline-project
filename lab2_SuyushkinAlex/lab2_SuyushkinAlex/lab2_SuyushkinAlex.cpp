@@ -78,7 +78,7 @@ int input_int() {
 	while (1) {
 		cin >> integer;
 
-		if (cin.fail()) {
+		if (cin.fail() || integer < 0) {
 			clear();
 			cout << "Incorrect input, try again." << endl;
 			continue;
@@ -96,7 +96,7 @@ float input_float() {
 	while (1) {
 		cin >> flt;
 
-		if (cin.fail()) {
+		if (cin.fail() || flt < 0) {
 			clear();
 			cout << "Incorrect input, try again." << endl;
 			continue;
@@ -127,7 +127,7 @@ bool input_bool() {
 };
 
 void input_pipe_characteristics(Pipe& pipe1) {
-
+	
 	cout << "pipe name > ";
 	pipe1.name = input_string();
 	cout << "pipe lenght > ";
@@ -140,41 +140,52 @@ void input_pipe_characteristics(Pipe& pipe1) {
 }
 
 void input_kc_characteristics(KC& kc1) {
-
+	
 	cout << "kc name > ";
 	kc1.name = input_string();
-	cout << "kc number_of_workshops > ";
+	cout << "kc number_of_workshops > ";;
 	kc1.number_of_workshops = input_int();
 	cout << "kc number_of_operating_workshops > ";
 	kc1.number_of_operating_workshops = input_int();
+	while (kc1.number_of_workshops < kc1.number_of_operating_workshops) {
+		cout << "number_of_workshops < number_of_operating_workshops, try again" << endl;
+		kc1.number_of_operating_workshops = input_int();
+	}
 	cout << "kc effectiveness > ";
 	kc1.effectiveness = input_float();
 
 }
 
+void print_pipe(const Pipe& pipe1) {
+	cout << "PIPE:" << endl <<
+		"Pipe name: " << pipe1.name << endl <<
+		"Pipe lenght: " << pipe1.lenght << endl <<
+		"Pipe diameter: " << pipe1.diameter << endl <<
+		"Pipe repair: " << pipe1.repair << endl;
+}
 
-void view_all_objects(Pipe& pipe1, KC& kc1) {
+void print_kc(const KC& kc1) {
+	cout << "KC:" << endl <<
+		"KC name: " << kc1.name << endl <<
+		"KC number_of_workshops: " << kc1.number_of_workshops << endl <<
+		"KC number_of_operating_workshops: " << kc1.number_of_operating_workshops << endl <<
+		"KC effectiveness >: " << kc1.effectiveness << endl;
+}
+
+void view_all_objects(const Pipe& pipe1, const KC& kc1) {///
 
 	if (pipe1.name == "No name") {
 		cout << "Pipe is not defined." << endl;
 	}
 	else {
-		cout << "PIPE:" << endl <<
-			"Pipe name: " << pipe1.name << endl <<
-			"Pipe lenght: " << pipe1.lenght << endl <<
-			"Pipe diameter: " << pipe1.diameter << endl <<
-			"Pipe repair: " << pipe1.repair << endl;
+		print_pipe(pipe1);
 	};
 
 	if (kc1.name == "No name") {
 		cout << "KC is not defined." << endl;
 	}
 	else {
-		cout << "KC:" << endl << 
-			"KC name: " << kc1.name << endl << 
-			"KC number_of_workshops: " << kc1.number_of_workshops << endl << 
-			"KC number_of_operating_workshops: " << kc1.number_of_operating_workshops << endl << 
-			"KC effectiveness >: " << kc1.effectiveness << endl;
+		print_kc(kc1);
 	};
 };
 
@@ -198,7 +209,7 @@ void edit_the_kc(KC& kc1) {
 	}
 };
 
-void write_in_file_pipe(Pipe& pipe1, ofstream& file) {
+void write_in_file_pipe(const Pipe& pipe1, ofstream& file) {///////
 	file << "PIPE:" << endl <<
 		pipe1.name << endl <<
 		pipe1.lenght << endl <<
@@ -207,7 +218,7 @@ void write_in_file_pipe(Pipe& pipe1, ofstream& file) {
 	
 }
 
-void write_in_file_kc(KC& kc1, ofstream& file) {
+void write_in_file_kc(const KC& kc1, ofstream& file) {//////
 	file << "KC:" << endl <<
 		kc1.name << endl <<
 		kc1.number_of_workshops << endl <<
@@ -265,8 +276,6 @@ void read_from_file(Pipe& pipe1, KC& kc1) {
 }
 
 
-
-
 int main()
 {
 	Pipe pipe1 = { "No name", 0, 0, 0};
@@ -278,7 +287,7 @@ int main()
 	do {
 		print_menu();
 
-		number = input_number(0, 7);
+		number = input_number(0, 8);
 
 		switch (number) {
 
@@ -309,6 +318,7 @@ int main()
 		case 7:
 			read_from_file(pipe1, kc1);
 			break;
+
 		};
 
 
