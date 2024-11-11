@@ -127,7 +127,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="lab2_SuyushkinAlex.cpp" />
+    <ClCompile Include="filter.cpp" />
+    <ClCompile Include="kc.cpp" />
+    <ClCompile Include="kc_actions.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="menu.cpp" />
+    <ClCompile Include="pipe.cpp" />
+    <ClCompile Include="pipes_actions.cpp" />
+    <ClCompile Include="pipe_actions.cpp" />
+    <ClCompile Include="test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="filter.h" />
+    <ClInclude Include="kc.h" />
+    <ClInclude Include="kc_actions.h" />
+    <ClInclude Include="menu.h" />
+    <ClInclude Include="pipe.h" />
+    <ClInclude Include="pipes_actions.h" />
+    <ClInclude Include="pipe_actions.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
