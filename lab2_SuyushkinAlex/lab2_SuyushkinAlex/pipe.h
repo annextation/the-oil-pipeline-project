@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 
 class Pipe 
 {
@@ -16,6 +17,7 @@ class Pipe
 	public:
 
 		Pipe();
+		Pipe(std::ifstream& file);
 
 		static int get_MaxID();
 		int get_id() const;
@@ -26,8 +28,11 @@ class Pipe
 
 		void set_repair(bool new_repair);
 
+		static void set_max_id(const std::unordered_map<int, Pipe>& pipe);
 
 		friend std::ostream& operator << (std::ostream& out, const Pipe& pipe);
 		friend std::istream& operator >> (std::istream& in, Pipe& pipe);
+
+		void save(std::ofstream& file) const;	
 };
 

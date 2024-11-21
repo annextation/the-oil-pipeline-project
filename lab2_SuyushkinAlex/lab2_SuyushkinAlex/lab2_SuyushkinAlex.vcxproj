@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,17 +130,19 @@
   <ItemGroup>
     <ClCompile Include="filter.cpp" />
     <ClCompile Include="kc.cpp" />
+    <ClCompile Include="kcs_actions.cpp" />
     <ClCompile Include="kc_actions.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="pipe.cpp" />
     <ClCompile Include="pipes_actions.cpp" />
     <ClCompile Include="pipe_actions.cpp" />
-    <ClCompile Include="test.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="filter.h" />
     <ClInclude Include="kc.h" />
+    <ClInclude Include="kcs_actions.h" />
     <ClInclude Include="kc_actions.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="pipe.h" />

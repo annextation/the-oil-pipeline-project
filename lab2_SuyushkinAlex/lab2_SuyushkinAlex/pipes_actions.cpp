@@ -13,6 +13,11 @@ void ChangePipesRepair(std::unordered_map<int, Pipe>& list_of_pipes, const std::
 	cout << "Input new repair: " ;
 	bool new_repair = GetCorrectNumber<bool>(0, 1);
 	for (const int& id : list_of_selected_pipes) {
-		list_of_pipes.find(id)->second.set_repair(new_repair);
+		if (list_of_pipes.contains(id)) {
+			list_of_pipes.find(id)->second.set_repair(new_repair);
+		}
+		else {
+			cout << "NO pipe with this id: " << id << endl;
+		}
 	}
 }

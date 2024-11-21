@@ -18,7 +18,7 @@ void add_kc(unordered_map<int, KC>& list_of_KCs) {
 void  veiw_all_kcs(unordered_map<int, KC>& list_of_KCs) {
 	cout << "<";
 	for (auto& kc : list_of_KCs) {
-		cout << "ID:" << kc.first << endl << kc.second << endl;
+		cout << kc.second << endl;
 	}
 	cout << ">";
 }
@@ -43,7 +43,7 @@ void delete_kc(unordered_map<int, KC>& list_of_KCs) {
 
 void edit_kc(unordered_map<int, KC>& list_of_KCs) {
 	int kc_id;
-	char input;
+	string input;
 	if (list_of_KCs.empty()) {
 		cout << "No kcs";
 	}
@@ -54,14 +54,14 @@ void edit_kc(unordered_map<int, KC>& list_of_KCs) {
 		if (list_of_KCs.count(kc_id) == 1) {
 			while (1) {
 				cout << "Number of operating workshops(+ = +1, - = -1), p.s. 0 - exit: ";
-				cin >> input;
-				if (input == '+' && list_of_KCs[kc_id].get_number_of_operating_workshops() < list_of_KCs[kc_id].get_number_of_workshops()) {
+				INPUT_LINE(cin, input);
+				if (input == "+" && list_of_KCs[kc_id].get_number_of_operating_workshops() < list_of_KCs[kc_id].get_number_of_workshops()) {
 					list_of_KCs[kc_id].set_number_of_operating_workshops(list_of_KCs[kc_id].get_number_of_operating_workshops() + 1); 
  				}
-				else if (input == '-' && list_of_KCs[kc_id].get_number_of_operating_workshops() <= list_of_KCs[kc_id].get_number_of_workshops() && list_of_KCs[kc_id].get_number_of_operating_workshops() > 0) {
+				else if (input == "-" && list_of_KCs[kc_id].get_number_of_operating_workshops() <= list_of_KCs[kc_id].get_number_of_workshops() && list_of_KCs[kc_id].get_number_of_operating_workshops() > 0) {
 					list_of_KCs[kc_id].set_number_of_operating_workshops(list_of_KCs[kc_id].get_number_of_operating_workshops() - 1);
 				}
-				else if (input == '0') {
+				else if (input == "0") {
 					break;
 				}
 				else {

@@ -17,7 +17,7 @@ void add_pipe(unordered_map<int, Pipe>& list_of_pipes) {
 void  veiw_all_pipes(unordered_map<int, Pipe>& list_of_pipes) {
 	cout << "<" << endl;
 	for (auto& pipe : list_of_pipes) {
-		cout << "ID:" << pipe.first << endl << pipe.second << endl;
+		cout << pipe.second << endl;
 	}
 	cout << ">" << endl;
 }

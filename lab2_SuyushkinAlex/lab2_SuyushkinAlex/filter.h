@@ -7,7 +7,6 @@
 #include <string>
 #include <sstream>
 
-
 template<typename T, typename K>
 using Filter = bool(*)(const T& set, const K param);
 
@@ -36,7 +35,7 @@ bool CheckByName(const T& set, const K name) {
 }
 
 template<typename T, typename K>
-void  FindByFilter(const std::unordered_map<int, T>& set, std::unordered_set<int>& subset, Filter<T, K> func, const K param) {
+void FindByFilter(const std::unordered_map<int, T>& set, std::unordered_set<int>& subset, Filter<T, K> func, const K param) {
 	for (const auto& set : set) {
 		if (func(set.second, param) == 1) {
 			subset.emplace(set.first);
@@ -48,16 +47,21 @@ template<typename T>
 void FindByName(const std::unordered_map<int, T>& set, std::unordered_set<int>& subset) {
 	std::string name;
 	std::cout << "Input a name to searh for: ";
-	std::cin.ignore();
-	std::getline(std::cin, name);
+	INPUT_LINE(std::cin, name);
 
 	FindByFilter(set, subset, CheckByName, name);
 }
 
-bool CheckRepair(const Pipe& pipe, const bool is_working);
+bool CheckRepair(const Pipe& set, const bool repair);
 
 
-void FindByRepair(const std::unordered_map<int, Pipe>& pipes, std::unordered_set<int>& selected_pipes);
+void FindByRepair(const std::unordered_map<int, Pipe>& set, std::unordered_set<int>& subset);
+
+
+bool CheckNonWorkWorshops(const KC& set, const int persent);
+
+
+void FindByNonWorkWorkshops(const std::unordered_map<int, KC>& set, std::unordered_set<int>& subset);
 
 template<typename T>
 void SelectAll(const std::unordered_map<int, T>& set, std::unordered_set<int>& subset) {
@@ -65,4 +69,3 @@ void SelectAll(const std::unordered_map<int, T>& set, std::unordered_set<int>& s
 		subset.emplace(set.first);
 	}
 }
-

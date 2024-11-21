@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
-
+#include <fstream>
+#include <sstream>
 #include "kc.h"
 #include "utils.h"
 
@@ -47,7 +48,9 @@ KC::KC() {
 
 ostream& operator << (ostream& out, const KC& kc)
 {
-	out << "kc name: " << kc.name << endl <<
+	out <<
+		"ID: " << kc.id << endl << 
+		"kc name: " << kc.name << endl <<
 		"kc number_of_workshops: " << kc.number_of_workshops << endl <<
 		"kc number_of_operating_workshops: " << kc.number_of_operating_workshops << endl <<
 		"kc effectiveness: " << kc.effectiveness << endl << endl;
@@ -68,4 +71,26 @@ istream& operator >> (istream& in, KC& kc)
 	kc.effectiveness = GetCorrectNumber<float>(0.1, 100.0);
 
 	return in;
+}
+
+void KC::save(ofstream& file) const {
+	file << "KC" << endl;
+	file << this->id << endl;
+	file << this->name << endl;
+	file << this->number_of_workshops << endl;
+	file << this->number_of_operating_workshops << endl;
+	file << this->effectiveness << endl;
+}
+
+void KC::set_max_id(const unordered_map<int, KC>& kc) {
+	KC::MaxID = get_max_id(kc);
+}
+
+KC::KC(std::ifstream& file) {
+	file >> this->id;
+	file.ignore(10000, '\n');
+	getline(file >> std::ws, this->name);
+	file >> this->number_of_workshops;
+	file >> this->number_of_operating_workshops;
+	file >> this->effectiveness;
 }

@@ -1,8 +1,10 @@
 #include <iostream>
 #include <string>
-
+#include <fstream>
+#include <sstream>
 #include "pipe.h"
 #include "utils.h"
+#include <unordered_map>
 
 
 using namespace std;
@@ -47,7 +49,8 @@ Pipe::Pipe() {
 
 ostream& operator << (ostream& out, const Pipe& pipe)
 {
-	out << "pipe name: " << pipe.name << endl <<
+	out << "ID " << pipe.id << endl <<
+		"pipe name: " << pipe.name << endl <<
 		"pipe diameter: " << pipe.diameter << endl <<
 		"pipe lenght: " << pipe.lenght << endl <<
 		"pipe repair: " << pipe.repair << endl << endl;
@@ -58,8 +61,7 @@ ostream& operator << (ostream& out, const Pipe& pipe)
 istream& operator >> (istream& in, Pipe& pipe)
 {
 	cout << "pipe name > ";
-	cin.ignore();
-	getline(in, pipe.name);
+	INPUT_LINE(in, pipe.name);
 	cout << "pipe lenght > ";
 	pipe.lenght = GetCorrectNumber<double>(1, 999);
 	cout << "pipe diameter > ";
@@ -68,4 +70,26 @@ istream& operator >> (istream& in, Pipe& pipe)
 	pipe.repair = GetCorrectNumber<bool>(0, 1);
 
 	return in;
+}
+
+void Pipe::save(ofstream& file) const {
+	file << "Pipe" << endl;
+	file << this->id << endl;
+	file << this->name << endl;
+	file << this->lenght << endl;
+	file << this->diameter << endl;
+	file << this->repair << endl;
+}
+
+void Pipe::set_max_id(const unordered_map<int, Pipe>& pipe) {
+	Pipe::MaxID = get_max_id(pipe);
+}
+
+Pipe::Pipe(std::ifstream& file) {
+	file >> this->id;
+	file.ignore(10000, '\n');
+	getline(file >> std::ws, this->name);
+	file >> this->lenght;
+	file >> this->diameter;
+	file >> this->repair;
 }
