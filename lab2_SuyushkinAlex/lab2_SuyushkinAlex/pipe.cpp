@@ -1,95 +1,185 @@
 #include <iostream>
-#include <string>
 #include <fstream>
-#include <sstream>
-#include "pipe.h"
-#include "utils.h"
-#include <unordered_map>
-
+#include <string>
+#include "../header_files/pipe.h"
+#include "../header_files/utils.h"
 
 using namespace std;
 
-int Pipe::MaxID = 0;
 
-int Pipe::get_MaxID() {
-	return Pipe::MaxID;
-}
+int Pipe::current_pipeID = 0;
 
-int Pipe::get_id() const {
-	return this->id;
-}
-
-string Pipe::get_name() const {
-	return this->name;
-}
-
-double Pipe::get_lenght() const {
-	return this->lenght;
-}
-
-int Pipe::get_diameter() const {
-	return this->diameter;
-}
-
-bool Pipe::get_repair() const {
-	return this->repair;
-}
-
-void Pipe::set_repair(bool new_repair) {
-	this->repair = new_repair;
-}
 
 Pipe::Pipe() {
-	id = ++MaxID;
-	name = "No Name";
-	diameter = 0;
-	lenght = 0;
-	repair = false;
+    cout << "-----add pipe-----\n";
+
+    this->id = ++Pipe::current_pipeID;
+    cout << "id: " << this->id << endl;
+
+    cout << "name: ";
+    INPUT_LINE(cin, this->name);
+
+    cout << "lenght: ";
+    this->length = GetCorrectNumber<int, std::vector<int>>("lenght: ", { 1, 10000 }, IsInRange);
+
+    cout << "diameter: ";
+    this->diameter = GetCorrectNumber<int, std::unordered_set<int>>("diameter: ", { 500, 700, 1000, 1400 }, IsExistingObj);
+
+    this->MAXperfomance = this->dictPerfomances.at(diameter);
+    cout << "perfomance: " << this->MAXperfomance << endl;
+
+    cout << "is_working(0 - no / 1 - yes): ";
+    this->is_working = GetCorrectNumber<int, std::vector<int>>("is_working(0 - no / 1 - yes): ", { 0, 1 }, IsInRange);
+
+    cout << "Pipe is created!\n";
+
+    cout << "------------------\n";
 }
 
-ostream& operator << (ostream& out, const Pipe& pipe)
-{
-	out << "ID " << pipe.id << endl <<
-		"pipe name: " << pipe.name << endl <<
-		"pipe diameter: " << pipe.diameter << endl <<
-		"pipe lenght: " << pipe.lenght << endl <<
-		"pipe repair: " << pipe.repair << endl << endl;
 
-	return out;
+Pipe::Pipe(const int& diameter, const int& lenght) {
+    cout << "-----add pipe-----\n";
+
+    this->id = ++Pipe::current_pipeID;
+    cout << "id: " << this->id << endl;
+
+    cout << "name: ";
+    INPUT_LINE(cin, this->name);
+
+    if (lenght != std::numeric_limits<int>::max()) {
+        this->length = lenght;
+        cout << "lenght: " << lenght << endl;
+    }
+    else {
+        cout << "lenght: ";
+        this->length = GetCorrectNumber<int, std::vector<int>>("lenght: ", { 1, 10000 }, IsInRange);
+    }
+
+    this->diameter = diameter;
+    cout << "diameter: " << diameter << endl;
+
+    this->MAXperfomance = this->dictPerfomances.at(diameter);
+    cout << "perfomance: " << this->MAXperfomance << endl;
+
+    cout << "is_working(0 - no / 1 - yes): ";
+    this->is_working = GetCorrectNumber<int, std::vector<int>>("is_working(0 - no / 1 - yes): ", { 0, 1 }, IsInRange);
+
+    cout << "Pipe is created!\n";
+
+    cout << "------------------\n";
 }
 
-istream& operator >> (istream& in, Pipe& pipe)
-{
-	cout << "pipe name > ";
-	INPUT_LINE(in, pipe.name);
-	cout << "pipe lenght > ";
-	pipe.lenght = GetCorrectNumber<double>(1, 999);
-	cout << "pipe diameter > ";
-	pipe.diameter = GetCorrectNumber<int>(1, 199);
-	cout << "pipe repair > ";
-	pipe.repair = GetCorrectNumber<bool>(0, 1);
-
-	return in;
-}
-
-void Pipe::save(ofstream& file) const {
-	file << "Pipe" << endl;
-	file << this->id << endl;
-	file << this->name << endl;
-	file << this->lenght << endl;
-	file << this->diameter << endl;
-	file << this->repair << endl;
-}
-
-void Pipe::set_max_id(const unordered_map<int, Pipe>& pipe) {
-	Pipe::MaxID = get_max_id(pipe);
-}
 
 Pipe::Pipe(std::ifstream& file) {
-	file >> this->id;
-	file.ignore(10000, '\n');
-	getline(file >> std::ws, this->name);
-	file >> this->lenght;
-	file >> this->diameter;
-	file >> this->repair;
+    file >> this->id;
+    file.ignore(10000, '\n');
+    getline(file >> std::ws, this->name);
+    file >> this->length;
+    file >> this->diameter;
+    file >> this->MAXperfomance;
+    file >> this->is_working;
+    file >> this->links[0];
+    file >> this->links[1];
+}
+
+int Pipe::get_currentId() {
+    return Pipe::current_pipeID;
+}
+
+
+int Pipe::get_id() const {
+    return this->id;
+}
+
+
+std::string Pipe::get_name() const {
+    return this->name;
+}
+
+
+bool Pipe::get_IsWorking() const {
+    return this->is_working;
+}
+
+
+int Pipe::get_diameter() const {
+    return this->diameter;
+}
+
+
+int Pipe::get_length() const {
+    return this->length;
+}
+
+
+bool Pipe::InUsing() const {
+    return (this->links[0]) || (this->links[1]);
+}
+
+
+int Pipe::get_MAXperfomance() const {
+    return this->MAXperfomance * this->is_working;
+}
+
+std::vector<int> Pipe::get_links() const {
+    return this->links;
+}
+
+
+bool Pipe::set_links(const int& out, const int& in) {
+    this->links = { out, in };
+    return 1;
+}
+
+
+void Pipe::clear_currentID() {
+    Pipe::current_pipeID = 1;
+}
+
+
+void Pipe::set_currentID(const unordered_map<int, Pipe>& data) {
+    Pipe::current_pipeID = get_maxKey(data);
+}
+
+
+string Pipe::work_to_string() const {
+    return this->is_working ? "yes" : "no";
+}
+
+
+void Pipe::edit_work_status() {
+    this->is_working = !this->is_working;
+}
+
+
+ostream& operator << (ostream& os, const Pipe& pipe) {
+    os << "-----Pipe " << pipe.get_id() << "-----" << endl
+        << "id: " << pipe.get_id() << endl
+        << "name: " << pipe.name << endl
+        << "lenght: " << pipe.length << endl
+        << "diameter: " << pipe.diameter << endl
+        << "perfomance: " << pipe.MAXperfomance << endl
+        << "is working: " << pipe.work_to_string() << endl
+        << "links{" << endl
+        << "   " << "out: "
+        << pipe.links[0] << " " << endl
+        << "   " << "in: "
+        << pipe.links[1] << " "
+        << endl << "}" << endl
+        << "--------------" << endl;
+
+    return os;
+}
+
+
+void Pipe::save(ofstream& file) const {
+    file << "Pipe" << endl;
+    file << this->id << endl;
+    file << this->name << endl;
+    file << this->length << endl;
+    file << this->diameter << endl;
+    file << this->MAXperfomance << endl;
+    file << this->is_working << endl;
+    file << this->links[0] << endl;
+    file << this->links[1] << endl;
 }

@@ -1,38 +1,51 @@
 #pragma once
-
-#include <string>
+#include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
-class Pipe 
-{
-	private:
 
-		int id;
-		static int MaxID;
-		std::string name;
-		double lenght;
-		int diameter;
-		bool repair;
+class Pipe {
+private:
+    static int current_pipeID;
+    std::unordered_map<int, int> dictPerfomances = {
+        {500, 5},
+        {700, 12},
+        {1000, 30},
+        {1400, 95}
+    };
 
-	public:
+    int id;
 
-		Pipe();
-		Pipe(std::ifstream& file);
+    std::string name;
+    int length;
+    int diameter;
+    int MAXperfomance;
+    bool is_working;
 
-		static int get_MaxID();
-		int get_id() const;
-		std::string get_name() const;
-		double get_lenght() const;
-		int get_diameter() const;
-		bool get_repair() const;
+    std::vector<int> links = { 0, 0 };
+public:
+    Pipe();
+    Pipe(const int& diameter, const int& lenght);
+    Pipe(std::ifstream& file);
 
-		void set_repair(bool new_repair);
+    static int get_currentId();
+    int get_id() const;
+    std::string get_name() const;
+    bool get_IsWorking() const;
+    int get_diameter() const;
+    int get_length() const;
+    int get_MAXperfomance() const;
 
-		static void set_max_id(const std::unordered_map<int, Pipe>& pipe);
+    bool InUsing() const;
+    std::vector<int> get_links() const;
+    bool set_links(const int& out, const int& in);
 
-		friend std::ostream& operator << (std::ostream& out, const Pipe& pipe);
-		friend std::istream& operator >> (std::istream& in, Pipe& pipe);
+    static void clear_currentID();
+    static void set_currentID(const std::unordered_map<int, Pipe>& data);
 
-		void save(std::ofstream& file) const;	
+    std::string work_to_string() const;
+    void edit_work_status();
+
+    friend std::ostream& operator << (std::ostream& os, const Pipe& pipe);
+    void save(std::ofstream& file) const;
 };
-

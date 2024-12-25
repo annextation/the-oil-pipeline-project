@@ -1,71 +1,38 @@
 #pragma once
-#include "pipe.h"
-#include "kc.h"
-#include "utils.h"
 #include <unordered_map>
 #include <unordered_set>
-#include <string>
 #include <sstream>
-
-template<typename T, typename K>
-using Filter = bool(*)(const T& set, const K param);
-
-template<typename T>
-std::unordered_set<int> SelectByID(const T& set) {
-	std::unordered_set<int> subset;
-	int id;
-	while (1) {
-		std::cout << "Input ID, p.s. 0 - finish the selection: ";
-		id = GetCorrectNumber(0, 1000);
-		if (id == 0) {
-			return subset;
-		}
-		if (set.count(id) == 1) {
-			subset.emplace(id);
-		}
-		else  if ((set.count(id) != 1)){
-			std::cout << "Pipe with this ID is not defined." << std::endl;
-		}
-	}
-}
-
-template<typename T, typename K>
-bool CheckByName(const T& set, const K name) {
-	return set.get_name().find(name) != std::string::npos;
-}
-
-template<typename T, typename K>
-void FindByFilter(const std::unordered_map<int, T>& set, std::unordered_set<int>& subset, Filter<T, K> func, const K param) {
-	for (const auto& set : set) {
-		if (func(set.second, param) == 1) {
-			subset.emplace(set.first);
-		}
-	}
-}
+#include <string>
+#include "../header_files/GTN.h"
 
 template<typename T>
-void FindByName(const std::unordered_map<int, T>& set, std::unordered_set<int>& subset) {
-	std::string name;
-	std::cout << "Input a name to searh for: ";
-	INPUT_LINE(std::cin, name);
+std::unordered_set<int> GTNetwork::selectByID(const T& set) {
+    std::unordered_set<int> subset;
+    int id;
 
-	FindByFilter(set, subset, CheckByName, name);
+    while (true) {
+        std::cout << "input id(0 for exit): ";
+        id = GetCorrectNumber<int, std::vector<int>>("input correct id: ", { 0, 1000 }, IsInRange);
+
+        if (id == 0) return subset;
+
+        if (set.contains(id)) subset.emplace(id);
+    }
 }
 
-bool CheckRepair(const Pipe& set, const bool repair);
+
+template<typename T, typename K>
+bool GTNetwork::checkByName(const T& obj, const K& name) {
+    return obj.get_name().find(name) != std::string::npos;
+}
 
 
-void FindByRepair(const std::unordered_map<int, Pipe>& set, std::unordered_set<int>& subset);
-
-
-bool CheckNonWorkWorshops(const KC& set, const int persent);
-
-
-void FindByNonWorkWorkshops(const std::unordered_map<int, KC>& set, std::unordered_set<int>& subset);
-
-template<typename T>
-void SelectAll(const std::unordered_map<int, T>& set, std::unordered_set<int>& subset) {
-	for (const auto& set : set) {
-		subset.emplace(set.first);
-	}
+template<typename T, typename K>
+bool GTNetwork::findByFilter(const std::unordered_map<int, T>& obj, std::unordered_set<int>& selected_obj, Filter<T, K> func, const K& param) {
+    for (const auto& pair : obj) {
+        if ((this->*func)(pair.second, param)) {
+            selected_obj.emplace(pair.first);
+        }
+    }
+    return 1;
 }

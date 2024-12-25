@@ -18,6 +18,28 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="compressor_station.h" />
+    <ClInclude Include="Deikstra.h" />
+    <ClInclude Include="EdmondsKarp.h" />
+    <ClInclude Include="filter.h" />
+    <ClInclude Include="GTN.h" />
+    <ClInclude Include="GTN_utils.h" />
+    <ClInclude Include="Kan_by_Volkov.h" />
+    <ClInclude Include="logger.h" />
+    <ClInclude Include="menu.h" />
+    <ClInclude Include="pipe.h" />
+    <ClInclude Include="utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="compressor_station.cpp" />
+    <ClCompile Include="filter.cpp" />
+    <ClCompile Include="GTN.cpp" />
+    <ClCompile Include="logger.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="menu.cpp" />
+    <ClCompile Include="pipe.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -127,29 +149,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="filter.cpp" />
-    <ClCompile Include="kc.cpp" />
-    <ClCompile Include="kcs_actions.cpp" />
-    <ClCompile Include="kc_actions.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="menu.cpp" />
-    <ClCompile Include="pipe.cpp" />
-    <ClCompile Include="pipes_actions.cpp" />
-    <ClCompile Include="pipe_actions.cpp" />
-    <ClCompile Include="utils.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="filter.h" />
-    <ClInclude Include="kc.h" />
-    <ClInclude Include="kcs_actions.h" />
-    <ClInclude Include="kc_actions.h" />
-    <ClInclude Include="menu.h" />
-    <ClInclude Include="pipe.h" />
-    <ClInclude Include="pipes_actions.h" />
-    <ClInclude Include="pipe_actions.h" />
-    <ClInclude Include="utils.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

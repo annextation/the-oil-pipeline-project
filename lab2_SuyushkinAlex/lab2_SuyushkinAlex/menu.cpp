@@ -1,256 +1,470 @@
 #include <iostream>
-#include "pipe.h"
-#include "pipe_actions.h"
-#include "kc.h"
-#include "kc_actions.h"
-#include "menu.h"
-#include "utils.h"
-#include "filter.h"
-#include "pipes_actions.h"
-#include "kcs_actions.h"
-#include <unordered_map>
-#include <unordered_set>
+#include "../header_files/menu.h"
+#include "../header_files/logger.h"
+#include "../header_files/GTN.h"
 #include <chrono>
 #include <format>
 
 using namespace std;
+using namespace chrono;
 
-void print_main_menu() {
-	cout << "-----------------------------" << endl;
-	cout << "1. Actions with the pipe" << endl;
-	cout << "2. Actions with the CS" << endl;
-	cout << "3. View all objects" << endl;
-	cout << "4. Save in file" << endl;
-	cout << "5. Load from file" << endl;
-	cout << "0. Exit" << endl;
-	cout << "-----------------------------" << endl;
-	cout << "> ";
-};
 
-void print_pipe_menu() {
-	cout << "-----------------------------" << endl;
-	cout << "1. Add a pipe" << endl;
-	cout << "2. Delete a pipe" << endl;
-	cout << "3. Edit a pipe" << endl;
-	cout << "4. View all pipes" << endl;
-	cout << "5. Filter" << endl;
-	cout << "0. Exit" << endl;
-	cout << "-----------------------------" << endl;
-	cout << "> ";
+// pipe menu
+void print_pipes_menu() {
+    cout << endl;
+    cout << endl;
+    cout << "-----Menu pipe-----\n";
+    cout << "0 - back\n";
+    cout << "1 - add pipe\n";
+    cout << "2 - select pipes\n";
+    cout << "--------------\n";
 }
 
-void print_filter_pipe() {
-	cout << "-----------------------------" << endl;
-	cout << "1. Select all pipes" << endl;
-	cout << "2. Select by ID" << endl;
-	cout << "3. Select by name" << endl;
-	cout << "4. Select by repair" << endl;
-	cout << "5. Actions with selected pipes" << endl;
-	cout << "0. Exit" << endl;
-	cout << "-----------------------------" << endl;
-	cout << "> ";
-}
+void pipes_menu(GTNetwork& gtn) {
+    while (true) {
+        print_pipes_menu();
 
-void filter_pipe(unordered_map<int, Pipe>& list_of_pipes, unordered_set<int>& list_of_selected_pipes) {
-	int input;
-	do {
-		print_filter_pipe();
-		input = GetCorrectNumber<int>(0, 5);
-		switch (input) {
-		case 1:
-			SelectAll(list_of_pipes, list_of_selected_pipes);
-			break;
-		case 2:
-			list_of_selected_pipes = SelectByID(list_of_pipes);
-			break;
-		case 3:
-			FindByName(list_of_pipes, list_of_selected_pipes);
-			break;
-		case 4:
-			FindByRepair(list_of_pipes, list_of_selected_pipes);		
-			break;
-		case 5:
-			select_pipes_menu(list_of_pipes, list_of_selected_pipes);
-			break;
-		}
-	} while (input != 0);
+        int choice = GetCorrectNumber<int, std::vector<int>>("input number: ", { 0, 2 }, IsInRange);
+
+        switch (choice)
+        {
+        case 0:
+            return;
+        case 1:
+            gtn.add_Pipe();
+            break;
+        case 2:
+            select_pipes_menu(gtn);
+            break;
+        default:
+            cout << "You choose the number, that not exist!\n";
+            break;
+        }
+    }
 }
 
 void print_select_pipes_menu() {
-	cout << "-----------------------------" << endl;
-	cout << "1. See selected pipes" << endl;
-	cout << "2. Change repair" << endl;
-	cout << "3. Select selected by ID" << endl;
-	cout << "4. Delete selected" << endl;
-	cout << "0. Exit" << endl;
-	cout << "-----------------------------" << endl;
-	cout << "> ";
+    cout << endl;
+    cout << endl;
+    cout << "-----Menu select pipe-----\n";
+    cout << "0 - back\n";
+    cout << "1 - see selected pipes\n";
+    cout << "2 - edit selected pipes\n";
+    cout << "3 - select from filter\n";
+    cout << "4 - choose ids from selected\n";
+    cout << "5 - remove from selected\n";
+    cout << "--------------\n";
 }
 
-void select_pipes_menu(unordered_map<int, Pipe>& list_of_pipes, unordered_set<int>& list_of_selected_pipes) {
-	int input;
-	do {
-		print_select_pipes_menu();
-		input = GetCorrectNumber(0, 8);
-		switch (input) {
-		case 1:
-			print_selected(list_of_pipes, list_of_selected_pipes);
-			break;
+void select_pipes_menu(GTNetwork& gtn) {
+    while (true) {
+        print_select_pipes_menu();
 
-		case 2:
-			ChangePipesRepair(list_of_pipes, list_of_selected_pipes);
-			break;
-		case 3:
-			list_of_selected_pipes = SelectByID(list_of_selected_pipes);
-			break;
-		case 4:
-			delete_selected(list_of_pipes, list_of_selected_pipes);
-			break;
-		}
-	} while (input != 0);
+        int choice = GetCorrectNumber<int, std::vector<int>>("input number: ", { 0, 5 }, IsInRange);
+
+        switch (choice)
+        {
+        case 0:
+            return;
+        case 1:
+            gtn.print_selectedPipes();
+            break;
+        case 2:
+            edit_pipes_menu(gtn);
+            break;
+        case 3:
+            filter_pipe_menu(gtn);
+            break;
+        case 4:
+            gtn.set_selectedPipes_byID(1);
+            break;
+        case 5:
+            gtn.clear_selected(0);
+            break;
+        default:
+            cout << "You choose the number, that not exist!\n";
+            break;
+        }
+    }
+}
+
+void print_filter_pipe() {
+    cout << endl;
+    cout << endl;
+    cout << "-----Menu filter pipe-----\n";
+    cout << "*new selections are added to the old ones*\n";
+    cout << "0 - back\n";
+    cout << "1 - select all pipes\n";
+    cout << "2 - select by id\n";
+    cout << "3 - select by name\n";
+    cout << "4 - select by work status\n";
+    cout << "--------------\n";
+}
+
+void filter_pipe_menu(GTNetwork& gtn) {
+    while (true) {
+        print_filter_pipe();
+
+        int choice = GetCorrectNumber<int, std::vector<int>>("input number: ", { 0, 4 }, IsInRange);
+
+        switch (choice)
+        {
+        case 0:
+            return;
+        case 1:
+            gtn.selectAllPipes();
+            break;
+        case 2:
+            gtn.set_selectedPipes_byID(0);
+            break;
+        case 3:
+            gtn.findPipesbyName();
+            break;
+        case 4:
+            gtn.findPipesByIsWorking();
+            break;
+        default:
+            cout << "You choose the number, that not exist!\n";
+            break;
+        }
+    }
+}
+
+void print_edit_pipe_menu() {
+    cout << endl;
+    cout << endl;
+    cout << "-----Menu edit pipe-----\n";
+    cout << "0 - back\n";
+    cout << "1 - change work status for selected pipes\n";
+    cout << "2 - delete selected pipes\n";
+    cout << "--------------\n";
+}
+
+void edit_pipes_menu(GTNetwork& gtn)
+{
+    while (true) {
+        print_edit_pipe_menu();
+
+        int choice = GetCorrectNumber<int, std::vector<int>>("input number: ", { 0, 2 }, IsInRange);
+
+        switch (choice)
+        {
+        case 0:
+            return;
+        case 1:
+            gtn.change_selectedPipes_workStatus();
+            break;
+        case 2:
+            gtn.del_selectedPipes();
+            break;
+        default:
+            cout << "You choose the number, that not exist!\n";
+            break;
+        }
+    }
 }
 
 
-void pipe_menu(unordered_map<int, Pipe>& list_of_pipes, unordered_set<int>& list_of_selected_pipes) {
-	int input;
-	do {
-		print_pipe_menu();
-		input = GetCorrectNumber<int>(0, 8);
+// CS menu
+void print_CS_menu() {
+    cout << endl;
+    cout << endl;
+    cout << "-----Menu C Station-----\n";
+    cout << "0 - back\n";
+    cout << "1 - add C Station\n";
+    cout << "2 - select C Station\n";
+    cout << "--------------\n";
+}
 
-		switch (input) {
-		case 1:
-			add_pipe(list_of_pipes);
-			break;
+void CS_menu(GTNetwork& gtn) {
+    while (true) {
+        print_CS_menu();
 
-		case 2:
-			delete_pipe(list_of_pipes);
-			break;
+        int choice = GetCorrectNumber<int, std::vector<int>>("input number: ", { 0, 2 }, IsInRange);
 
-		case 3:
-			edit_pipe_repair(list_of_pipes);
-			break;
+        switch (choice)
+        {
+        case 0:
+            return;
+        case 1:
+            gtn.add_CS();
+            break;
+        case 2:
+            select_CS_menu(gtn);
+            break;
+        default:
+            cout << "You choose the number, that not exist!\n";
+            break;
+        }
+    }
+}
 
-		case 4:
-			veiw_all_pipes(list_of_pipes);
-			break;
+void print_select_CS_menu() {
+    cout << endl;
+    cout << endl;
+    cout << "-----Menu select C Station-----\n";
+    cout << "0 - back\n";
+    cout << "1 - see selected CS\n";
+    cout << "2 - edit selected CS\n";
+    cout << "3 - select from filter\n";
+    cout << "4 - choose ids from selected\n";
+    cout << "5 - remove from selected\n";
+    cout << "--------------\n";
+}
 
-		case 5:
-			filter_pipe(list_of_pipes, list_of_selected_pipes);
-			break;
-		}
-	} while (input != 0);
+void select_CS_menu(GTNetwork& gtn) {
+    while (true) {
+        print_select_CS_menu();
+
+        int choice = GetCorrectNumber<int, std::vector<int>>("input number: ", { 0, 5 }, IsInRange);
+
+        switch (choice)
+        {
+        case 0:
+            return;
+        case 1:
+            gtn.print_selectedCS();
+            break;
+        case 2:
+            edit_CS_menu(gtn);
+            break;
+        case 3:
+            filter_CS_menu(gtn);
+            break;
+        case 4:
+            gtn.set_selectedCS_byID(1);
+            break;
+        case 5:
+            gtn.clear_selected(1);
+            break;
+        default:
+            cout << "You choose the number, that not exist!\n";
+            break;
+        }
+    }
+}
+
+void print_filter_CS() {
+    cout << endl;
+    cout << endl;
+    cout << "-----Menu filter CS-----\n";
+    cout << "*new selections are added to the old ones*\n";
+    cout << "0 - back\n";
+    cout << "1 - select all CS\n";
+    cout << "2 - select by id\n";
+    cout << "3 - select by name\n";
+    cout << "4 - select by unused workshops\n";
+    cout << "--------------\n";
+}
+
+void filter_CS_menu(GTNetwork& gtn) {
+    while (true) {
+        print_filter_CS();
+
+        int choice = GetCorrectNumber<int, std::vector<int>>("input number: ", { 0, 4 }, IsInRange);
+
+        switch (choice)
+        {
+        case 0:
+            return;
+        case 1:
+            gtn.selectAllCS();
+            break;
+        case 2:
+            gtn.set_selectedCS_byID(0);
+            break;
+        case 3:
+            gtn.findCSbyName();
+            break;
+        case 4:
+            gtn.findByUnusedWorkshops();
+            break;
+        default:
+            cout << "You choose the number, that not exist!\n";
+            break;
+        }
+    }
+}
+
+void print_edit_CS_menu() {
+    cout << endl;
+    cout << endl;
+    cout << "-----Menu edit CS-----\n";
+    cout << "0 - back\n";
+    cout << "1 - change number of active workshops\n";
+    cout << "2 - delete selected CS\n";
+    cout << "--------------\n";
+}
+
+void edit_CS_menu(GTNetwork& gtn)
+{
+    while (true) {
+        print_edit_CS_menu();
+
+        int choice = GetCorrectNumber<int, std::vector<int>>("input number: ", { 0, 2 }, IsInRange);
+
+        switch (choice)
+        {
+        case 0:
+            return;
+        case 1:
+            gtn.change_selectedCS_workload();
+            break;
+        case 2:
+            gtn.del_selectedCS();
+            break;
+        default:
+            cout << "You choose the number, that not exist!\n";
+            break;
+        }
+    }
 }
 
 
-void print_filter_kc() {
-	cout << "-----------------------------" << endl;
-	cout << "1. Select all kcs" << endl;
-	cout << "2. Select by ID" << endl;
-	cout << "3. Select by name" << endl;
-	cout << "4. Select by % of non-working workshops" << endl;
-	cout << "5. Actions with selected kcs" << endl;
-	cout << "0. Exit" << endl;
-	cout << "-----------------------------" << endl;
-	cout << "> ";
+// GTN menu
+void print_GTN_menu() {
+    cout << endl;
+    cout << endl;
+    cout << "-----Menu GTN-----\n";
+    cout << "0 - back\n";
+    cout << "1 - create graph\n";
+    cout << "2 - print graph\n";
+    cout << "3 - make TS\n";
+    cout << "4 - find min path\n";
+    cout << "5 - count max flow\n";
+    cout << "6 - edit GTN\n";
+    cout << "--------------\n";
 }
 
-void filter_kc(unordered_map<int, KC>& list_of_KCs, unordered_set<int>& list_of_selected_KCs) {
-	int input;
-	do {
-		print_filter_kc();
-		input = GetCorrectNumber<int>(0, 5);
-		switch (input) {
-		case 1:
-			SelectAll(list_of_KCs, list_of_selected_KCs);
-			break;
-		case 2:
-			list_of_selected_KCs = SelectByID(list_of_KCs);
-			break;
-		case 3:
-			FindByName(list_of_KCs, list_of_selected_KCs);
-			break;
-		case 4:
-			FindByNonWorkWorkshops(list_of_KCs, list_of_selected_KCs);
-			break;
-		case 5:
-			select_kcs_menu(list_of_KCs, list_of_selected_KCs);
-			break;
-		}
-	} while (input != 0);
+void GTN_menu(GTNetwork& gtn) {
+    while (true) {
+        print_GTN_menu();
+
+        int choice = GetCorrectNumber<int, std::vector<int>>("input number: ", { 0, 6 }, IsInRange);
+
+        switch (choice)
+        {
+        case 0:
+            return;
+        case 1:
+            gtn.create_graph();
+            break;
+        case 2:
+            gtn.print_graph();
+            break;
+        case 3:
+            gtn.make_TS();
+            break;
+        case 4:
+            gtn.find_min_dist();
+            break;
+        case 5:
+            gtn.count_maxFlow();
+            break;
+        case 6:
+            edit_GTN_menu(gtn);
+            break;
+        default:
+            cout << "You choose the number, that not exist!\n";
+            break;
+        }
+    }
+}
+
+void print_edit_GTN_menu() {
+    cout << endl;
+    cout << endl;
+    cout << "-----Menu edit GTN-----\n";
+    cout << "0 - back\n";
+    cout << "1 - add node\n";
+    cout << "2 - delete pipes\n";
+    cout << "3 - delete CSs\n";
+    cout << "4 - clear graph\n";
+    cout << "--------------\n";
+}
+
+void edit_GTN_menu(GTNetwork& gtn) {
+    while (true) {
+        print_edit_GTN_menu();
+
+        int choice = GetCorrectNumber<int, std::vector<int>>("input number: ", { 0, 4 }, IsInRange);
+
+        switch (choice)
+        {
+        case 0:
+            return;
+        case 1:
+            gtn.add_node();
+            break;
+        case 2:
+            gtn.delPipeFromGraph();
+            break;
+        case 3:
+            gtn.delCSFromGraph();
+            break;
+        case 4:
+            gtn.clear_graph();
+            break;
+        default:
+            cout << "You choose the number, that not exist!\n";
+            break;
+        }
+    }
 }
 
 
-void print_select_kcs_menu() {
-	cout << "-----------------------------" << endl;
-	cout << "1. See selected kcs" << endl;
-	cout << "2. Change number of operating workshops" << endl;
-	cout << "3. Select selected by ID" << endl;
-	cout << "4. Delete selecred" << endl;
-	cout << "0. Exit" << endl;
-	cout << "-----------------------------" << endl;
-	cout << "> ";
-}
+// main menu
+void print_main_menu() {
+    cout << endl;
+    cout << endl;
+    cout << "-----Menu-----\n";
+    cout << "0 - exit\n";
+    cout << "1 - pipes actions\n";
+    cout << "2 - compressor stations actions\n";
+    cout << "3 - GTN actions\n";
+    cout << "4 - see all objects\n";
+    cout << "5 - save in file\n";
+    cout << "6 - load from file\n";
+    cout << "--------------\n";
+};
 
-void select_kcs_menu(unordered_map<int, KC>& list_of_KCs, unordered_set<int>& list_of_selected_KCs) {
-	int input;
-	do {
-		print_select_kcs_menu();
-		input = GetCorrectNumber(0, 3);
-		switch (input) {
-		case 1:
-			print_selected(list_of_KCs, list_of_selected_KCs);
-			break;
+void main_menu() {
+    Logger logger("log_" + std::string(std::format("{:%d_%m_%Y_%H_%M}", system_clock::now())) + ".txt");
 
-		case 2:
-			ChangeNumberOfOperatingWorkshops(list_of_KCs, list_of_selected_KCs);
-			break;
-		case 3:
-			list_of_selected_KCs = SelectByID(list_of_selected_KCs);
-			break;
-		case 4:
-			delete_selected(list_of_KCs, list_of_selected_KCs);
-		}
-	} while (input != 0);
-}
+    GTNetwork gtn;
 
-void print_kc_menu() {
-	cout << "-----------------------------" << endl;
-	cout << "1. Add a KC" << endl;
-	cout << "2. Delete a KC" << endl;
-	cout << "3. Edit a KC" << endl;
-	cout << "4. View all KCs" << endl;
-	cout << "5. Filter" << endl;
-	cout << "0. Exit" << endl;
-	cout << "-----------------------------" << endl;
-	cout << "> ";
-}
+    while (true) {
+        print_main_menu();
 
-void kc_menu(unordered_map<int, KC>& list_of_KCs, unordered_set<int>& list_of_selected_KCs) {
-	int input;
-	do {
-		print_kc_menu();
-		input = GetCorrectNumber<int>(0, 5);
+        int choice = GetCorrectNumber<int, std::vector<int>>("input number: ", { 0, 6 }, IsInRange);
 
-		switch (input) {
-		case 1:
-			add_kc(list_of_KCs);
-			break;
-
-		case 2:
-			delete_kc(list_of_KCs);
-			break;
-
-		case 3:
-			edit_kc(list_of_KCs);
-			break;
-
-		case 4:
-			veiw_all_kcs(list_of_KCs);
-			break;
-
-		case 5:
-			filter_kc(list_of_KCs, list_of_selected_KCs);
-			break;
-		}
-	} while (input != 0);
-}
+        switch (choice)
+        {
+        case 0:
+            cout << endl;
+            cout << "Goodbye!\n";
+            return;
+        case 1:
+            pipes_menu(gtn);
+            break;
+        case 2:
+            CS_menu(gtn);
+            break;
+        case 3:
+            GTN_menu(gtn);
+            break;
+        case 4:
+            cout << gtn;
+            break;
+        case 5:
+            gtn.save();
+            break;
+        case 6:
+            gtn.load();
+            break;
+        default:
+            cout << "You choose the number, that not exist!\n";
+            break;
+        }
+    }
+};
